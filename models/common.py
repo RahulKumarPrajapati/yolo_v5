@@ -641,6 +641,9 @@ class Detections:
         for i, (im, pred) in enumerate(zip(self.imgs, self.pred)):
             s = f'image {i + 1}/{len(self.pred)}: {im.shape[0]}x{im.shape[1]} '  # string
             if pred.shape[0]:
+                save = True
+                save_dir = 'runs/detect/exp'
+                save_dir = increment_path(path = save_dir, exist_ok=save_dir != 'runs/detect/exp', mkdir=True) if save else None
                 for c in pred[:, -1].unique():
                     n = (pred[:, -1] == c).sum()  # detections per class
                     s += f"{n} {self.names[int(c)]}{'s' * (n > 1)}, "  # add to string
@@ -689,6 +692,7 @@ class Detections:
     def save(self, labels=True, save_dir='runs/detect/exp'):
         save_dir = increment_path(save_dir, exist_ok=save_dir != 'runs/detect/exp', mkdir=True)  # increment save_dir
         self.display(save=True, labels=labels, save_dir=save_dir)  # save results
+        print(save_dir)
 
     def crop(self, save=True, save_dir='runs/detect/exp'):
         save_dir = increment_path(save_dir, exist_ok=save_dir != 'runs/detect/exp', mkdir=True) if save else None
@@ -716,6 +720,9 @@ class Detections:
         #    for k in ['imgs', 'pred', 'xyxy', 'xyxyn', 'xywh', 'xywhn']:
         #        setattr(d, k, getattr(d, k)[0])  # pop out of list
         return x
+
+    def saveResults(self):
+        return self.display(crop=True, save=False)  # crop results
 
     def __len__(self):
         return self.n  # override len(results)
